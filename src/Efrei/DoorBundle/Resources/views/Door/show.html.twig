@@ -1,0 +1,107 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Door</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Location</th>
+                <td>{{ entity.location }}</td>
+            </tr>
+            <tr>
+                <th>Batiment</th>
+                <td>{{ entity.batiment }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ entity.description }}</td>
+            </tr>
+            <tr>
+                <th>Createdat</th>
+                <td>{{ entity.createdAt|date('Y-m-d H:i:s') }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('door') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('door_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+
+	<h1> Accès </h1>
+	
+{{ form(access_form) }}
+	
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th></th>
+				<th colspan="2">Identité</th>
+				<th colspan="2">Validité de l'accès</th>
+				<th colspan="2">Tranche horaire autorisée</th>
+			</tr>
+		</thead>
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Personne</th>
+				<th>Groupe</th>
+				<th>Porte</th>
+				<th>De la date</th>
+				<th>A la date</th>
+				<th>Début</th>
+				<th>Fin</th>
+				<th></th>
+			</tr>
+		</thead>
+		
+		
+		<tbody>
+		{% for access in entity.accesses %}
+		
+			<tr>
+				<td>{{ access.id }}</td>
+				<td>{% if access.card is not null %} {{ access.card.lastname }} {{ access.card.firstname }} ({{ access.card.cardcode }}) {% endif %}</td>
+				<td>{% if access.group is not null %} {{ access.group.name }} {% endif %}</td>
+				<td>{% if access.door is not null %} {{ access.door.location }} {% endif %}</td>
+				<td style="text-align: right;">{% if access.fromdate is not null %} {{ access.fromdate|date('d-m-Y H:i') }} {% endif %}</td>
+				<td style="text-align: right;">{% if access.todate is not null %} {{ access.todate|date('d-m-Y H:i') }} {% endif %}</td>
+				<td style="text-align: right;">{% if access.fromtime is not null %} {{ access.fromtime|date('H:i') }} {% endif %}</td>
+				<td style="text-align: right;">{% if access.totime is not null %} {{ access.totime|date('H:i') }} {% endif %}</td>
+				<td><a href="javascript:disableAccess('{{ path('access_delete_from', { 'id': entity.id, 'entity': 'door' }) }}')">Désactiver</a></td>
+			</tr>
+		
+		{% else %}
+			<tr>
+				<td colspan="7">Aucune personne n'a accès à cette porte.</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	
+	
+	<script>
+	
+		function disableAccess(url) {
+		
+			if(confirm('Voulez-vous vraiment désactiver ce droit d\'accès ?')) {
+				location.href = url;
+			}
+		}
+	</script>
+	
+{% endblock %}

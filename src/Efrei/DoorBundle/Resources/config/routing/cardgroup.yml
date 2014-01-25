@@ -1,0 +1,40 @@
+group:
+    pattern:  /
+    defaults: { _controller: "EfreiDoorBundle:CardGroup:index" }
+
+group_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "EfreiDoorBundle:CardGroup:show" }
+
+group_new:
+    pattern:  /new
+    defaults: { _controller: "EfreiDoorBundle:CardGroup:new" }
+
+group_create:
+    pattern:  /create
+    defaults: { _controller: "EfreiDoorBundle:CardGroup:create" }
+    requirements: { _method: post }
+
+group_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "EfreiDoorBundle:CardGroup:edit" }
+
+group_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "EfreiDoorBundle:CardGroup:update" }
+    requirements: { _method: post|put }
+
+group_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "EfreiDoorBundle:CardGroup:delete" }
+    requirements: { _method: post|delete }
+
+group_create_access:
+    pattern:  /access/create/{id}
+    defaults: { _controller: "EfreiDoorBundle:CardGroup:createAccess" }
+    requirements: { _method: post }
+
+group_delete_access:
+    pattern:  /access/delete/{id}
+    defaults: { _controller: "EfreiDoorBundle:CardGroup:deleteAccess" }
+    requirements: { _method: get }

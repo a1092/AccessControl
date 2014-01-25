@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<a href="{{ path('efrei_door_new_door') }}">Nouvelle porte</a>
+
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Porte</th>
+				<th>Batiment</th>
+				<th></th>
+				<th></th>
+				<th></th>
+			</tr>
+		</thead>
+		
+		<tbody>
+	{% for door in doors %}
+			<tr>
+				<td>{{ door.id }}</td>
+				<td>{{ door.location }}</td>
+				<td>{{ door.batiment }}</td>
+				<td><a href="{{ path('efrei_door_view_door', { 'id': door.id }) }}">Consulter</a></td>
+				<td><a href="{{ path('efrei_door_edit_door', { 'id': door.id }) }}">Modifier</a></td>
+				<td>Supprimer</td>
+			</tr>
+	{% endfor %}
+		</tbody>
+	</table>
+</html>

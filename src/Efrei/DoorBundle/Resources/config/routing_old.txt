@@ -1,0 +1,39 @@
+efrei_door_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: EfreiDoorBundle:Default:index }
+
+efrei_door_list_door:
+    pattern:  /door
+    defaults: { _controller: EfreiDoorBundle:Door:index }
+
+efrei_door_new_door:
+    pattern:  /door/new
+    defaults: { _controller: EfreiDoorBundle:Door:edit }
+
+efrei_door_edit_door:
+    pattern:  /door/edit/{id}
+    defaults: { _controller: EfreiDoorBundle:Door:edit }
+
+efrei_door_view_door:
+    pattern:  /door/view/{id}
+    defaults: { _controller: EfreiDoorBundle:Door:view }
+
+efrei_door_list_card:
+    pattern:  /card
+    defaults: { _controller: EfreiDoorBundle:Card:index }
+
+efrei_door_new_card:
+    pattern:  /card/new
+    defaults: { _controller: EfreiDoorBundle:Card:edit }
+
+efrei_door_edit_card:
+    pattern:  /card/edit/{id}
+    defaults: { _controller: EfreiDoorBundle:Card:edit }
+
+efrei_door_view_card:
+    pattern:  /card/view/{id}
+    defaults: { _controller: EfreiDoorBundle:Card:view }
+
+efrei_door_disable_access:
+    pattern:  /card/access/disable/{id}/{from}
+    defaults: { _controller: EfreiDoorBundle:Access:disable }

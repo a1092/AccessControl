@@ -1,0 +1,76 @@
+<div>{{ card.firstname }} {{ card.lastname }}</div>
+<div>{{ card.cardcode }} {{ card.facilitycode }}</div>
+
+
+
+<div>
+	<ul>
+		<li><a href="{{ path('efrei_door_list_card') }}">Retourner à la liste</a></li>
+		<li><a href="{{ path('efrei_door_edit_card', { 'id': card.id }) }}"> Modifier </a></li>
+	</ul>
+</div>
+
+<div class="well">
+  <form method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+    <input type="submit" class="btn btn-primary" />
+  </form>
+</div>
+
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th></th>
+				<th colspan="2">Identité</th>
+				<th colspan="2">Validité de l'accès</th>
+				<th colspan="2">Tranche horaire autorisée</th>
+			</tr>
+		</thead>
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Porte</th>
+				<th>Batiment</th>
+				<th>De la date</th>
+				<th>A la date</th>
+				<th>Début</th>
+				<th>Fin</th>
+				<th></th>
+			</tr>
+		</thead>
+		
+		<tbody>
+		{% for access in accesses_active %}
+		
+			<tr>
+				<td>{{ access.id }}</td>
+				<td>{{ access.door.location }}</td>
+				<td>{{ access.door.batiment }}</td>
+				<td style="text-align: right;">{% if access.fromdate is not null %} {{ access.fromdate|date('d-m-Y H:i') }} {% endif %}</td>
+				<td style="text-align: right;">{% if access.todate is not null %} {{ access.todate|date('d-m-Y H:i') }} {% endif %}</td>
+				<td style="text-align: right;">{% if access.fromtime is not null %} {{ access.fromtime|date('H:i') }} {% endif %}</td>
+				<td style="text-align: right;">{% if access.totime is not null %} {{ access.totime|date('H:i') }} {% endif %}</td>
+				<td><a href="javascript:disableAccess('{{ path('efrei_door_disable_access', { 'id': access.id, 'from': 'door' }) }}')">Désactiver</a></td>
+			</tr>
+		
+		{% else %}
+			<tr>
+				<td colspan="7">Aucune personne n'a accès à cette porte.</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	
+	
+	
+	
+	<script>
+	
+		function disableAccess(url) {
+		
+			if(confirm('Voulez-vous vraiment désactiver ce droit d\'accès ?')) {
+				location.href = url;
+			}
+		}
+	</script>
+	

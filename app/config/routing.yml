@@ -1,0 +1,8 @@
+efrei_user:
+    resource: "@EfreiUserBundle/Resources/config/routing.yml"
+    prefix:   /
+
+efrei_door:
+    resource: "@EfreiDoorBundle/Resources/config/routing.yml"
+    prefix:   /
+

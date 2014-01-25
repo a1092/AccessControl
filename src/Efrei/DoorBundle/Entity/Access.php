@@ -1,0 +1,287 @@
+<?php
+
+namespace Efrei\DoorBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Access
+ *
+ * @ORM\Table()
+ * @ORM\Entity(repositoryClass="Efrei\DoorBundle\Entity\AccessRepository")
+ */
+class Access
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fromdate", type="datetime", nullable=true)
+     */
+    private $fromdate;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="todate", type="datetime", nullable=true)
+     */
+    private $todate;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fromtime", type="time", nullable=true)
+     */
+    private $fromtime;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="totime", type="time", nullable=true)
+     */
+    private $totime;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="active", type="integer", nullable=true)
+     */
+    private $active;
+
+	
+	/**
+	* @ORM\ManyToOne(targetEntity="Efrei\DoorBundle\Entity\Door")
+	* @ORM\JoinColumn(nullable=true)
+	*/
+	private $door;
+	
+	/**
+	* @ORM\ManyToOne(targetEntity="Efrei\DoorBundle\Entity\Card")
+	* @ORM\JoinColumn(nullable=true)
+	*/
+	private $card;
+	
+	/**
+	* @ORM\ManyToOne(targetEntity="Efrei\DoorBundle\Entity\CardGroup", cascade={"persist"}, inversedBy="accesses")
+	*/
+	private $group;
+	
+	
+	
+	public function __construct($obj = null)
+	{
+		if(get_class($obj) == 'Efrei\DoorBundle\Entity\Door') {
+			$this->door = $obj;
+		} else if(get_class($obj) == 'Efrei\DoorBundle\Entity\Card') {
+			$this->card = $obj;
+		} else if(get_class($obj) == 'Efrei\DoorBundle\Entity\CardGroup') {
+			$this->group = $obj;
+		}
+		
+		$this->active = true;
+	}
+	
+	
+	
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set fromdate
+     *
+     * @param \DateTime $fromdate
+     * @return Access
+     */
+    public function setFromdate($fromdate)
+    {
+        $this->fromdate = $fromdate;
+
+        return $this;
+    }
+
+    /**
+     * Get fromdate
+     *
+     * @return \DateTime 
+     */
+    public function getFromdate()
+    {
+        return $this->fromdate;
+    }
+
+    /**
+     * Set todate
+     *
+     * @param \DateTime $todate
+     * @return Access
+     */
+    public function setTodate($todate)
+    {
+        $this->todate = $todate;
+
+        return $this;
+    }
+
+    /**
+     * Get todate
+     *
+     * @return \DateTime 
+     */
+    public function getTodate()
+    {
+        return $this->todate;
+    }
+
+    /**
+     * Set fromtime
+     *
+     * @param \DateTime $fromtime
+     * @return Access
+     */
+    public function setFromtime($fromtime)
+    {
+        $this->fromtime = $fromtime;
+
+        return $this;
+    }
+
+    /**
+     * Get fromtime
+     *
+     * @return \DateTime 
+     */
+    public function getFromtime()
+    {
+        return $this->fromtime;
+    }
+
+    /**
+     * Set totime
+     *
+     * @param \DateTime $totime
+     * @return Access
+     */
+    public function setTotime($totime)
+    {
+        $this->totime = $totime;
+
+        return $this;
+    }
+
+    /**
+     * Get totime
+     *
+     * @return \DateTime 
+     */
+    public function getTotime()
+    {
+        return $this->totime;
+    }
+
+    /**
+     * Set active
+     *
+     * @param integer $active
+     * @return Access
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+
+        return $this;
+    }
+
+    /**
+     * Get active
+     *
+     * @return integer 
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * Set door
+     *
+     * @param \Efrei\DoorBundle\Entity\Door $door
+     * @return Access
+     */
+    public function setDoor(\Efrei\DoorBundle\Entity\Door $door)
+    {
+        $this->door = $door;
+
+        return $this;
+    }
+
+    /**
+     * Get door
+     *
+     * @return \Efrei\DoorBundle\Entity\Door 
+     */
+    public function getDoor()
+    {
+        return $this->door;
+    }
+
+    /**
+     * Set card
+     *
+     * @param \Efrei\DoorBundle\Entity\Card $card
+     * @return Access
+     */
+    public function setCard(\Efrei\DoorBundle\Entity\Card $card)
+    {
+        $this->card = $card;
+
+        return $this;
+    }
+
+    /**
+     * Get card
+     *
+     * @return \Efrei\DoorBundle\Entity\Card 
+     */
+    public function getCard()
+    {
+        return $this->card;
+    }
+
+    /**
+     * Set group
+     *
+     * @param \Efrei\DoorBundle\Entity\CardGroup $group
+     * @return Access
+     */
+    public function setGroup(\Efrei\DoorBundle\Entity\CardGroup $group = null)
+    {
+        $this->group = $group;
+
+        return $this;
+    }
+
+    /**
+     * Get group
+     *
+     * @return \Efrei\DoorBundle\Entity\CardGroup 
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+}

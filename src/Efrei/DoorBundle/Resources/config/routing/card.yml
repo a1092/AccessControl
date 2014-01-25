@@ -1,0 +1,35 @@
+card:
+    pattern:  /
+    defaults: { _controller: "EfreiDoorBundle:Card:index" }
+
+card_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "EfreiDoorBundle:Card:show" }
+
+card_new:
+    pattern:  /new
+    defaults: { _controller: "EfreiDoorBundle:Card:new" }
+
+card_create:
+    pattern:  /create
+    defaults: { _controller: "EfreiDoorBundle:Card:create" }
+    requirements: { _method: post }
+
+card_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "EfreiDoorBundle:Card:edit" }
+
+card_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "EfreiDoorBundle:Card:update" }
+    requirements: { _method: post|put }
+
+card_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "EfreiDoorBundle:Card:delete" }
+    requirements: { _method: post|delete }
+
+card_create_access:
+    pattern:  /access/{id}
+    defaults: { _controller: "EfreiDoorBundle:Card:createAccess" }
+    requirements: { _method: post }

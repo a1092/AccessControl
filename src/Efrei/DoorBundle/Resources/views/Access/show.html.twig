@@ -1,0 +1,48 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Access</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Fromdate</th>
+                <td>{{ entity.fromdate|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Todate</th>
+                <td>{{ entity.todate|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Fromtime</th>
+                <td>{{ entity.fromtime }}</td>
+            </tr>
+            <tr>
+                <th>Totime</th>
+                <td>{{ entity.totime }}</td>
+            </tr>
+            <tr>
+                <th>Active</th>
+                <td>{{ entity.active }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('access') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('access_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}

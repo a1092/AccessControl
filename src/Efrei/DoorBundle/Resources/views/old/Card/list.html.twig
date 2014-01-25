@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<a href="{{ path('efrei_door_new_card') }}">Nouvelle carte</a>
+
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Nom</th>
+				<th>Prénom</th>
+				<th>Carte</th>
+				<th></th>
+				<th></th>
+				<th></th>
+			</tr>
+		</thead>
+		
+		<tbody>
+	{% for card in cards %}
+			<tr>
+				<td>{{ card.id }}</td>
+				<td>{{ card.firstname }}</td>
+				<td>{{ card.lastname }}</td>
+				<td>{{ card.cardcode }} {{ card.facilitycode }}</td>
+				<td><a href="{{ path('efrei_door_view_card', { 'id': card.id }) }}">Consulter</a></td>
+				<td><a href="{{ path('efrei_door_edit_card', { 'id': card.id }) }}">Modifier</a></td>
+				<td>Supprimer</td>
+			</tr>
+	{% endfor %}
+		</tbody>
+	</table>
+</html>

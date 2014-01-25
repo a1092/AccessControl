@@ -1,0 +1,35 @@
+door:
+    pattern:  /
+    defaults: { _controller: "EfreiDoorBundle:Door:index" }
+
+door_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "EfreiDoorBundle:Door:show" }
+
+door_new:
+    pattern:  /new
+    defaults: { _controller: "EfreiDoorBundle:Door:new" }
+
+door_create:
+    pattern:  /create
+    defaults: { _controller: "EfreiDoorBundle:Door:create" }
+    requirements: { _method: post }
+
+door_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "EfreiDoorBundle:Door:edit" }
+
+door_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "EfreiDoorBundle:Door:update" }
+    requirements: { _method: post|put }
+
+door_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "EfreiDoorBundle:Door:delete" }
+    requirements: { _method: post|delete }
+
+door_create_access:
+    pattern:  /access/{id}
+    defaults: { _controller: "EfreiDoorBundle:Door:createAccess" }
+    requirements: { _method: post }

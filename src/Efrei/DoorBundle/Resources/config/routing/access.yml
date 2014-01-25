@@ -1,0 +1,36 @@
+access:
+    pattern:  /
+    defaults: { _controller: "EfreiDoorBundle:Access:index" }
+
+access_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "EfreiDoorBundle:Access:show" }
+
+access_new:
+    pattern:  /new
+    defaults: { _controller: "EfreiDoorBundle:Access:new" }
+
+access_create:
+    pattern:  /create
+    defaults: { _controller: "EfreiDoorBundle:Access:create" }
+    requirements: { _method: post }
+
+access_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "EfreiDoorBundle:Access:edit" }
+
+access_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "EfreiDoorBundle:Access:update" }
+    requirements: { _method: post|put }
+
+access_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "EfreiDoorBundle:Access:delete" }
+    requirements: { _method: post|delete }
+
+access_delete_from:
+    pattern:  /{id}/delete/{entity}
+    defaults: { _controller: "EfreiDoorBundle:Access:deleteFrom" }
+    requirements: { _method: get }
+

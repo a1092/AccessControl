@@ -1,0 +1,7 @@
+parameters:
+#    efrei_user.example.class: Efrei\UserBundle\Example
+
+services:
+#    efrei_user.example:
+#        class: %efrei_user.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

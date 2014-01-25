@@ -1,0 +1,7 @@
+parameters:
+#    efrei_door.example.class: Efrei\DoorBundle\Example
+
+services:
+#    efrei_door.example:
+#        class: %efrei_door.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

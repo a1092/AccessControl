@@ -1,0 +1,17 @@
+
+
+EfreiDoorBundle_card:
+    resource: "@EfreiDoorBundle/Resources/config/routing/card.yml"
+    prefix:   /card
+
+EfreiDoorBundle_group:
+    resource: "@EfreiDoorBundle/Resources/config/routing/cardgroup.yml"
+    prefix:   /group
+
+EfreiDoorBundle_door:
+    resource: "@EfreiDoorBundle/Resources/config/routing/door.yml"
+    prefix:   /door
+
+EfreiDoorBundle_access:
+    resource: "@EfreiDoorBundle/Resources/config/routing/access.yml"
+    prefix:   /access
