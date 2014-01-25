@@ -34,3 +34,7 @@ access_delete_from:
     defaults: { _controller: "EfreiDoorBundle:Access:deleteFrom" }
     requirements: { _method: get }
 
+access_check:
+    pattern: /check/{door}/{cardcode}/{facilitycode}
+    defaults: { _controller: "EfreiDoorBundle:Access:check" }
+    requirements: { _method: get }

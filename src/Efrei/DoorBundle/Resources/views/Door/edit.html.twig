@@ -1,16 +1,49 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Door edit</h1>
+	<form {{ form_enctype(edit_form) }} action="{{ path('door_update', {id: entity.id}) }}" method="POST" class="form-horizontal" role="form">
+	
+		<div class="row">
+			<div class="col-md-8">
+				<h1>Nouvelle porte</h1>
+			</div>
+			<div class="col-md-4 text-right">
+				<a class="btn btn-danger" href="{{ path('door') }}">Retourner à la liste</a>
+				<input type="submit" class="btn btn-success" value="Enregistrer" class="button" />
+			</div>
+		</div>
+		
+		<div style="margin-top: 40px;">
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.location, "Location") }}</label>
+				{{ form_errors(edit_form.location) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.location) }}
+				</div>
+			</div>
+			
 
-    {{ form(edit_form) }}
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.batiment, "Bâtiment") }}</label>
+				{{ form_errors(edit_form.batiment) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.batiment) }}
+				</div>
+			</div>
+		  
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.description, "Description") }}</label>
+				{{ form_errors(edit_form.description) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.description) }}
+				</div>
+			</div>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('door') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+		
+			{{ form_rest(edit_form) }}
+									
+		</div>
+	</form>
+
 {% endblock %}

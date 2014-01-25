@@ -25,10 +25,17 @@ class DoorController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
+		
+		$batiments = $em->getRepository('EfreiDoorBundle:Door')->findBatiment();
+		
+		foreach($batiments as $id=>$batiment) {
+			$batiments[$id]["doors"] = $em->getRepository('EfreiDoorBundle:Door')->findBy(array('batiment' => $batiment["batiment"]), array('location' => 'ASC'));
+		}
         $entities = $em->getRepository('EfreiDoorBundle:Door')->findAll();
+        
 
         return $this->render('EfreiDoorBundle:Door:index.html.twig', array(
+            'batiments' => $batiments,
             'entities' => $entities,
         ));
     }
@@ -65,6 +72,7 @@ class DoorController extends Controller
     */
     private function createCreateForm(Door $entity)
     {
+	/*
         $form = $this->createForm(new DoorType(), $entity, array(
             'action' => $this->generateUrl('door_create'),
             'method' => 'POST',
@@ -73,6 +81,31 @@ class DoorController extends Controller
         $form->add('submit', 'submit', array('label' => 'Create'));
 
         return $form;
+		*/
+		return $this->createFormBuilder($entity)
+					->setMethod('POST')
+					->setAction($this->generateUrl('door_create'))
+					->add('location', 'text', array(
+						'required'    => true,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('batiment', 'text', array(
+						'required'    => true,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('description', 'textarea', array(
+						'attr' => array(
+							'class' => 'form-control',
+							'rows' => '3'
+						),
+						'required'    => true
+					))
+		->getForm();
+			
     }
 
     /**
@@ -107,11 +140,25 @@ class DoorController extends Controller
         $deleteForm = $this->createDeleteForm($id);
         $accessForm = $this->createAccessForm(new Access($entity));
         
+		$CardAccess = $em->getRepository('EfreiDoorBundle:Card')->AccessDoor(array('door' => $id));
 		
+		/*
+		$data_accesses = array();
 		
+		foreach($accesses as $access) {
+			
+			$letter = substr($access->getCard()->getLastname(), 1);
+			$cardid = $access->getCard()->getId();
+			
+			$data_accesses[$letter][$cardid]["card"] = $access->getCard();
+			$data_accesses[$letter][$cardid]["accesses"][] = $access;
+
+		}
+		*/
 		
         return $this->render('EfreiDoorBundle:Door:show.html.twig', array(
             'entity'      => $entity,
+            'card_accesses'      => $CardAccess,
             'delete_form' => $deleteForm->createView(),
             'access_form' => $accessForm->createView(),        
 		));
@@ -140,9 +187,14 @@ class DoorController extends Controller
             $em->flush();
 
             return $this->redirect($this->generateUrl('door_show', array('id' => $id)));
-        } else {
-			
-		}
+        } 
+		
+		 return $this->render('EfreiDoorBundle:Door:show.html.twig', array(
+            'entity'      => $entity,
+            'delete_form' => $this->createDeleteForm($id)->createView(),
+            'access_form' => $accessForm->createView(),        
+		));
+		
 	}
 	
     /**
@@ -178,6 +230,7 @@ class DoorController extends Controller
     */
     private function createEditForm(Door $entity)
     {
+		/*
         $form = $this->createForm(new DoorType(), $entity, array(
             'action' => $this->generateUrl('door_update', array('id' => $entity->getId())),
             'method' => 'PUT',
@@ -186,6 +239,31 @@ class DoorController extends Controller
         $form->add('submit', 'submit', array('label' => 'Update'));
 
         return $form;
+		*/
+		
+		return $this->createFormBuilder($entity)
+					->setMethod('POST')
+					->setAction($this->generateUrl('door_create'))
+					->add('location', 'text', array(
+						'required'    => true,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('batiment', 'text', array(
+						'required'    => true,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('description', 'textarea', array(
+						'attr' => array(
+							'class' => 'form-control',
+							'rows' => '3'
+						),
+						'required'    => true
+					))
+		->getForm();
     }
     /**
      * Edits an existing Door entity.
@@ -208,7 +286,7 @@ class DoorController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('door_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('door_show', array('id' => $id)));
         }
 
         return $this->render('EfreiDoorBundle:Door:edit.html.twig', array(
@@ -284,7 +362,7 @@ class DoorController extends Controller
 				'required' => true,
 				'empty_value' => ''
 			))
-			->add('submit', 'submit')
+			//->add('Ajouter l\'accès', 'submit')
 			->getForm()
         ;
     }

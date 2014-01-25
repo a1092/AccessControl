@@ -12,4 +12,20 @@ use Doctrine\ORM\EntityRepository;
  */
 class CardRepository extends EntityRepository
 {
+	public function AccessDoor($door) {
+		
+	
+		$qb = $this->createQueryBuilder('Card')
+					->leftJoin('Card.accesses', 'Access')
+					->where('Access.door = :door')
+					->setParameter('door', (int)$door)
+					->andwhere('Access.active = 1')
+				
+		; 
+			
+		$query = $qb->getQuery();
+		
+		
+		return $query->getResult();
+	}
 }

@@ -3,6 +3,8 @@
 namespace Efrei\DoorBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Efrei\DoorBundle\Entity\Access;
@@ -250,4 +252,23 @@ class AccessController extends Controller
             ->getForm()
         ;
     }
+	
+	public function checkAction($door, $cardcode, $facilitycode) {
+	
+		$em = $this->getDoctrine()->getEntityManager();
+		$permission = $em->getRepository('EfreiDoorBundle:Access')->checkAccess($door, $cardcode, $facilitycode);		
+		
+		$response = new Response();
+	
+		if(count($permission) > 0) {
+			$response->setStatusCode(200);
+		} else {
+			$response->setStatusCode(400);
+		}
+		
+		
+		return $response;
+		
+		
+	}
 }

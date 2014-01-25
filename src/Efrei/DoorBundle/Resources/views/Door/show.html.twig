@@ -1,52 +1,34 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Door</h1>
-
-    <table class="record_properties">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Location</th>
-                <td>{{ entity.location }}</td>
-            </tr>
-            <tr>
-                <th>Batiment</th>
-                <td>{{ entity.batiment }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ entity.description }}</td>
-            </tr>
-            <tr>
-                <th>Createdat</th>
-                <td>{{ entity.createdAt|date('Y-m-d H:i:s') }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('door') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('door_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
-
-	<h1> Accès </h1>
+    <div class="row">
+		<div class="col-md-8">
+			<h1>{{entity.location}} <small> Bâtiment {{ entity.batiment }}</small></h1>
+		</div>
+		<div class="col-md-4 text-right">
+			<a class="btn btn-danger" href="{{ path('door') }}">Retourner à la liste</a>
+			<a href="{{ path('door_edit', { id: entity.id }) }}" class="btn btn-success" >Modifier</a>
+		</div>
+	</div>
 	
-{{ form(access_form) }}
+	<p>
+		{{ entity.description }}
+	</p>
+
 	
-	<table class="table table-striped">
+	<div class="row" style="margin-top: 30px;">
+		
+		<div class="col-md-9">
+			
+			<div class="row">
+				<div class="col-md-9">
+					<h4>Accès autorisés</h1>
+				</div>
+				<div class="col-md-3 text-right">
+					<a href="#" class="btn btn-success" data-toggle="modal" data-target="#addAccess"><i class="glyphicon glyphicon-asterisk"></i> Nouvel accès</a>
+				</div>
+			</div>
+		<table class="table table-striped">
 		<thead>
 			<tr>
 				<th></th>
@@ -63,14 +45,62 @@
 				<th>Porte</th>
 				<th>De la date</th>
 				<th>A la date</th>
-				<th>Début</th>
-				<th>Fin</th>
-				<th></th>
 			</tr>
 		</thead>
 		
 		
 		<tbody>
+		{% for card in card_accesses %}
+			<tr>
+				<td><i class="glyphicon glyphicon-user "></i></td>
+
+				<td>{{ card.lastname }}</td>
+				<td>{{ card.firstname }}</td>
+				<td>{{ card.cardcode }} {{ card.facilitycode }}</td>
+				<td>P2015</td>
+				<td class="text-right"><i class="glyphicon glyphicon-chevron-down"></i>
+			</tr>
+			<tr id="card{{ card.id }}">
+				<td colspan="6">
+					<table style="width: 100%">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>Délégation</th>
+								<th>Porte</th>
+								<th colspan="2">Période de validité</th>
+								<th colspan="2">Horaires d'accès</th>
+								<th>Jours d'accès</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for access in card.accesses %}
+							<tr>
+								<td>{{ access.id }}</td>
+								<td>{% if access.group is not null %} {{ access.group.name }} {% endif %}</td>
+								<td>{% if access.door is not null %} {{ access.door.location }} {% endif %}</td>
+								<td style="text-align: right;">{% if access.fromdate is not null %} {{ access.fromdate|date('d-m-Y H:i') }} {% endif %}</td>
+								<td style="text-align: right;">{% if access.todate is not null %} {{ access.todate|date('d-m-Y H:i') }} {% endif %}</td>
+								<td style="text-align: right;">{% if access.fromtime is not null %} {{ access.fromtime|date('H:i') }} {% endif %}</td>
+								<td style="text-align: right;">{% if access.totime is not null %} {{ access.totime|date('H:i') }} {% endif %}</td>
+								<td></td>
+								<td><a href="javascript:disableAccess('{{ path('access_delete_from', { 'id': entity.id, 'entity': 'door' }) }}')">Désactiver</a></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		{% endfor %}
+		
+		
+		</tbody>
+	</table>
+		</div>
+		
+		
+		
 		{% for access in entity.accesses %}
 		
 			<tr>
@@ -90,9 +120,117 @@
 				<td colspan="7">Aucune personne n'a accès à cette porte.</td>
 			</tr>
 		{% endfor %}
-		</tbody>
-	</table>
+		
+		<div class="col-md-3">
+			<div>
+				<h4>Derniers passages</h4>
+				<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Carte</th>
+						<th>Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="success">
+						<td>WIZEL Alexandre (3856)</td>
+						<td>2014-01-25 19:24:04</td>
+					</tr>
+					<tr class="danger">
+						<td>WIZEL Alexandre (3856)</td>
+						<td>2014-01-25 19:24:04</td>
+					</tr>
+					<tr class="danger">
+						<td>WIZEL Alexandre (3856)</td>
+						<td>2014-01-25 19:24:04</td>
+					</tr>
+					<tr class="success">
+						<td>WIZEL Alexandre (3856)</td>
+						<td>2014-01-25 19:24:04</td>
+					</tr>
+				
+				</table>
+			</div>
+		</div>
+	</div>
 	
+	
+	
+	
+	
+	<!-- Modal -->
+<div class="modal fade" id="addAccess" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width: 800px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Nouvel accès</h4>
+      </div>
+	  <form {{ form_enctype(access_form) }} action="{{ path('door_create_access', {id: entity.id}) }}" method="POST" class="form-horizontal" role="form">
+      <div class="modal-body">
+			{{ form_errors(access_form) }}
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Porte</label>
+				<div class="col-sm-6">
+				{{ entity.location }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Bâtiment</label>
+				<div class="col-sm-6">
+				{{ entity.batiment }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">{{ form_label(access_form.card, "Carte d'accès") }}</label>
+				{{ form_errors(access_form.card) }}
+				<div class="col-sm-6">
+				{{ form_widget(access_form.card) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Durée de validité<br/><small>Laissez vide si cet accès ne périme jamais.</small></label>
+				{{ form_errors(access_form.fromdate) }}
+				{{ form_errors(access_form.todate) }}
+				<div class="col-sm-3">
+				{{ form_widget(access_form.fromdate) }}
+				</div>
+				<div class="col-sm-3">
+				{{ form_widget(access_form.todate) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Horaires d'accès<br/><small>Laissez vide si cet accès ne possède pas d'horaires.</small></label>
+				{{ form_errors(access_form.fromtime) }}
+				{{ form_errors(access_form.totime) }}
+				<div class="col-sm-3">
+				{{ form_widget(access_form.fromtime) }}
+				</div>
+				<div class="col-sm-3">
+				{{ form_widget(access_form.totime) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Jours d'accès<br/><small>Laissez vide si cet accès ne possède pas de restriction.</small></label>
+				
+				<div class="col-sm-6">
+				
+				</div>
+			</div>
+			
+			{{ form_rest(access_form) }}
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Anunler</button>
+        <button type="submit" class="btn btn-success">Ajouter l'accès</button>
+      </div>
+	  </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
 	
 	<script>
 	

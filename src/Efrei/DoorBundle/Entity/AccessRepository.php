@@ -12,4 +12,39 @@ use Doctrine\ORM\EntityRepository;
  */
 class AccessRepository extends EntityRepository
 {
+	public function checkAccess($door, $cardcode, $facilitycode) {
+		
+	
+		$qb = $this->createQueryBuilder('j')
+					->leftJoin('j.card', 'c')
+					->leftJoin('j.door', 'd')
+					
+					->where('c.cardcode = :cardcode')
+					->setParameter('cardcode', $cardcode)
+					->andwhere('c.facilitycode = :facilitycode')
+					->setParameter('facilitycode', $facilitycode)
+					->andwhere('d.location = :door')
+					->setParameter('door', $door)
+					
+					->andwhere('j.fromdate <= :fromdate OR j.fromdate is NULL')
+					->setParameter('fromdate', date('Y-m-d H:i:s', time()))
+					
+					
+					->andwhere('j.todate >= :todate OR j.todate is NULL')
+					->setParameter('todate', date('Y-m-d H:i:s', time()))
+		
+					
+				//	->andwhere('(j.day = :day OR j.day is NULL)')
+				//	->setParameter('day', date('l', time()))
+				//	->andwhere('(j.fromtime >= :fromtime OR j.fromtime is NULL)')
+				//	->setParameter('fromtime', date('H:i:s', time()))
+				//	->andwhere('(j.totime <= :totime OR j.totime is NULL)')
+				//	->setParameter('totime', date('H:i:s', time()))
+		; 
+			
+		$query = $qb->getQuery();
+		
+		
+		return $query->getResult();
+	}
 }

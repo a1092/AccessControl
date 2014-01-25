@@ -12,4 +12,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class DoorRepository extends EntityRepository
 {
+	public function findBatiment() {
+	
+		$qb = $this->createQueryBuilder('Door')
+			->select('Door.batiment')
+			->distinct('batiment')
+			->orderBy('Door.batiment', 'ASC')
+		;
+		
+		$query = $qb->getQuery();
+		return $query->getResult();
+	}
 }
