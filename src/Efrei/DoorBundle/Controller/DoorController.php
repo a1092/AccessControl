@@ -140,7 +140,7 @@ class DoorController extends Controller
         $deleteForm = $this->createDeleteForm($id);
         $accessForm = $this->createAccessForm(new Access($entity));
         
-		$CardAccess = $em->getRepository('EfreiDoorBundle:Card')->AccessDoor(array('door' => $id));
+		$cardAccess = $em->getRepository('EfreiDoorBundle:Card')->AccessDoor($entity);
 		
 		/*
 		$data_accesses = array();
@@ -158,7 +158,7 @@ class DoorController extends Controller
 		
         return $this->render('EfreiDoorBundle:Door:show.html.twig', array(
             'entity'      => $entity,
-            'card_accesses'      => $CardAccess,
+            'card_accesses'      => $cardAccess,
             'delete_form' => $deleteForm->createView(),
             'access_form' => $accessForm->createView(),        
 		));
@@ -356,6 +356,12 @@ class DoorController extends Controller
 			->add('totime', 'time', array(
 				'required' => false,
 				'empty_value' => ''
+			))
+			->add('days', 'choice', array(
+				'choices'   => array('Lundi' => 'Lundi', 'Mardi' => 'Mardi', 'Mercredi' => 'Mercredi', 'Jeudi' => 'Jeudi', 'Vendredi' => 'Vendredi', 'Samedi' => 'Samedi', 'Dimanche' => 'Dimanche'),
+				'required' => false,
+				'empty_value' => '',
+				'multiple' => true
 			))
 			->add('card', 'entity', array(
 				'class' => 'Efrei\DoorBundle\Entity\Card',

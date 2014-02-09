@@ -14,18 +14,45 @@ class CardRepository extends EntityRepository
 {
 	public function AccessDoor($door) {
 		
-	
 		$qb = $this->createQueryBuilder('Card')
 					->leftJoin('Card.accesses', 'Access')
 					->where('Access.door = :door')
-					->setParameter('door', (int)$door)
+					->setParameter('door', $door)
 					->andwhere('Access.active = 1')
-				
-		; 
+		;
+		
 			
 		$query = $qb->getQuery();
 		
+		return $query->getResult();
+	}
+	
+	public function AccessGroup($group) {
 		
+		$qb = $this->createQueryBuilder('Card')
+					->leftJoin('Card.accesses', 'Access')
+					->where('Access.group = :group')
+					->setParameter('group', $group)
+					->andwhere('Access.active = 1')
+		;
+		
+		$query = $qb->getQuery();
+		
+		return $query->getResult();
+	}
+	
+	
+	
+	
+	public function findPromotion() {
+	
+		$qb = $this->createQueryBuilder('Card')
+			->select(array('Card.promotion', 'Card.type'))
+			->distinct(array('promotion', 'type'))
+			->orderBy('Card.promotion', 'DESC')
+		;
+		
+		$query = $qb->getQuery();
 		return $query->getResult();
 	}
 }

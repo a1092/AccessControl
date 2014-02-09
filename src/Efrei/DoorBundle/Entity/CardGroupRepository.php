@@ -12,4 +12,30 @@ use Doctrine\ORM\EntityRepository;
  */
 class CardGroupRepository extends EntityRepository
 {
+	
+	public function findDoor() {
+	
+		$qb = $this->createQueryBuilder('CardGroup')
+				->select(array('Door.id', 'Door.location', 'Door.batiment'))
+				->leftJoin('CardGroup.door', 'Door')
+				->distinct('Door.location')
+				->orderBy('Door.location', 'ASC')
+			;
+		
+		$query = $qb->getQuery();
+		return $query->getResult();
+	}
+	
+	public function findByUser($user) {
+	
+		$qb = $this->createQueryBuilder('CardGroup', 'p')
+					->leftjoin('CardGroup.users', 'd', 'ON p.id = d.id')
+					->where('d.id = :user')
+					->setParameter('user', $user)
+		;
+		
+		$query = $qb->getQuery();
+		
+		return $query->getResult();
+	}
 }

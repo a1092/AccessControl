@@ -241,4 +241,15 @@ class Door
     {
         return $this->group;
     }
+
+	public function allowManage(\Efrei\UserBundle\Entity\User $user) {
+		
+		foreach($this->group as $group) {
+			
+			if($group->allowManage($user))
+				return true;
+		}
+		
+		return false;
+	}
 }

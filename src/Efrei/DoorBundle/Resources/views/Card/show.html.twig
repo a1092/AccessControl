@@ -1,99 +1,275 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Card</h1>
-
-    <table class="record_properties">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Firstname</th>
-                <td>{{ entity.firstname }}</td>
-            </tr>
-            <tr>
-                <th>Lastname</th>
-                <td>{{ entity.lastname }}</td>
-            </tr>
-            <tr>
-                <th>Cardcode</th>
-                <td>{{ entity.cardcode }}</td>
-            </tr>
-            <tr>
-                <th>Facilitycode</th>
-                <td>{{ entity.facilitycode }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ entity.description }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('card') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('card_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
-
-	<h1> Accès </h1>
+   <div class="row">
+		<div class="col-md-8">
+			<h1>{{entity.firstname}} {{entity.lastname}} <small> {{ entity.type }} {{ entity.promotion }}</small></h1>
+		</div>
+		<div class="col-md-4 text-right">
+			<a class="btn btn-danger" href="{{ path('card') }}">Retourner à la liste</a>
+			<a href="{{ path('card_edit', { id: entity.id }) }}" class="btn btn-success" >Modifier</a>
+		</div>
+	</div>
 	
-{{ form(access_form) }}
+	<p>
+		{{ entity.description }}
+	</p>
 	
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th></th>
-				<th colspan="2">Identité</th>
-				<th colspan="2">Validité de l'accès</th>
-				<th colspan="2">Tranche horaire autorisée</th>
-			</tr>
-		</thead>
-		<thead>
-			<tr>
-				<th>#</th>
-				<th>Personne</th>
-				<th>Groupe</th>
-				<th>Porte</th>
-				<th>De la date</th>
-				<th>A la date</th>
-				<th>Début</th>
-				<th>Fin</th>
-				<th></th>
-			</tr>
-		</thead>
+	<div class="row" style="margin-top: 30px;">
+		
+		<div class="col-md-9">
+			
+			<div class="row">
+				<div class="col-md-9">
+					<h4>Accès autorisés</h1>
+				</div>
+				<div class="col-md-3 text-right">
+					<a href="#" class="btn btn-success" data-toggle="modal" data-target="#addAccess"><i class="glyphicon glyphicon-asterisk"></i> Nouvel accès</a>
+				</div>
+			</div>
+			
+			<table class="table table-striped">
+			
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Porte</th>
+						<th>Bâtiment</th>
+						<th>Description</th>
+						<th class="text-center">Action</th>
+					</tr>
+				</thead>	
+				
+				
+				<tbody>
+				{% for door in door_accesses %}
+					<tr>
+						<td><i class="glyphicon glyphicon-user "></i></td>
+						<td>{{ door.location }}</td>
+						<td>{{ door.batiment }}</td>
+						<td>{{ door.description }}</td>
+						<td class="text-right">
+							<a onclick="$('#AccessModal-doorname').html('{{ door.location|e('js') }}'); $('#AccessModal-doorid').val('{{ door.id }}'); loadAccesses({{ door.id }}, {{ entity.id }});" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#AccessModal"><i class="glyphicon glyphicon-time "></i> {{ door.accesses|length }} {% if door.accesses|length > 1 %}autorisations{% else %}autorisation{% endif %}</a>
+							<a href="#" onclick="return disableAllAccess({{ door.id }}, {{ entity.id }});" class="btn btn-danger btn-sm">Interdire</a>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="5" class="text-center">Cette personne a accès à aucune porte.</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</div>
 		
 		
-		<tbody>
-		{% for access in entity.accesses %}
 		
-			<tr>
-				<td>{{ access.id }}</td>
-				<td>{% if access.card is not null %} {{ access.card.lastname }} {{ access.card.firstname }} ({{ access.card.cardcode }}) {% endif %}</td>
-				<td>{% if access.group is not null %} {{ access.group.name }} {% endif %}</td>
-				<td>{% if access.door is not null %} {{ access.door.location }} {% endif %}</td>
-				<td style="text-align: right;">{% if access.fromdate is not null %} {{ access.fromdate|date('d-m-Y H:i') }} {% endif %}</td>
-				<td style="text-align: right;">{% if access.todate is not null %} {{ access.todate|date('d-m-Y H:i') }} {% endif %}</td>
-				<td style="text-align: right;">{% if access.fromtime is not null %} {{ access.fromtime|date('H:i') }} {% endif %}</td>
-				<td style="text-align: right;">{% if access.totime is not null %} {{ access.totime|date('H:i') }} {% endif %}</td>
-				<td><a href="javascript:disableAccess()">Désactiver</a></td>
-			</tr>
+		<div class="col-md-3">
+			<div>
+				<h4>Derniers passages</h4>
+				<table class="table table-hover">
+				<thead>
+					<tr>
+						<th>Carte</th>
+						<th>Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="success">
+						<td>WIZEL Alexandre (3856)</td>
+						<td>2014-01-25 19:24:04</td>
+					</tr>
+					<tr class="danger">
+						<td>WIZEL Alexandre (3856)</td>
+						<td>2014-01-25 19:24:04</td>
+					</tr>
+					<tr class="danger">
+						<td>WIZEL Alexandre (3856)</td>
+						<td>2014-01-25 19:24:04</td>
+					</tr>
+					<tr class="success">
+						<td>WIZEL Alexandre (3856)</td>
+						<td>2014-01-25 19:24:04</td>
+					</tr>
+				
+				</table>
+			</div>
+		</div>
+	</div>
+	
+	
+	<!-- Modal -->
+<div class="modal fade" id="addAccess" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width: 800px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Nouvel accès</h4>
+      </div>
+	  <form {{ form_enctype(access_form) }} action="{{ path('card_create_access', {id: entity.id}) }}" method="POST" class="form-horizontal" role="form">
+      <div class="modal-body">
+			{{ form_errors(access_form) }}
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Identité</label>
+				<div class="col-sm-6">
+				{{ entity.firstname }} {{ entity.lastname }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Type</label>
+				<div class="col-sm-6">
+				{{ entity.type }} {{ entity.promotion }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">{{ form_label(access_form.door, "Porte") }}</label>
+				{{ form_errors(access_form.door) }}
+				<div class="col-sm-6">
+				{{ form_widget(access_form.door) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Durée de validité<br/><small>Laissez vide si cet accès ne périme jamais.</small></label>
+				{{ form_errors(access_form.fromdate) }}
+				{{ form_errors(access_form.todate) }}
+				<div class="col-sm-3">
+				{{ form_widget(access_form.fromdate) }}
+				</div>
+				<div class="col-sm-3">
+				{{ form_widget(access_form.todate) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Horaires d'accès<br/><small>Laissez vide si cet accès ne possède pas d'horaires.</small></label>
+				{{ form_errors(access_form.fromtime) }}
+				{{ form_errors(access_form.totime) }}
+				<div class="col-sm-3">
+				{{ form_widget(access_form.fromtime) }}
+				</div>
+				<div class="col-sm-3">
+				{{ form_widget(access_form.totime) }}
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-4 control-label">Jours d'accès<br/><small>Laissez vide si cet accès ne possède pas de restriction.</small></label>
+				
+				<div class="col-sm-6">
+					{{ form_widget(access_form.days) }}
+				</div>
+			</div>
+			
+			{{ form_rest(access_form) }}
 		
-		{% else %}
-			<tr>
-				<td colspan="7">Aucune personne n'a accès à cette porte.</td>
-			</tr>
-		{% endfor %}
-		</tbody>
-	</table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Anunler</button>
+        <button type="submit" class="btn btn-success">Ajouter l'accès</button>
+      </div>
+	  </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<div class="modal fade" id="AccessModal" tabindex="-1" role="dialog" aria-labelledby="AccessModalLabel" aria-hidden="true">
+  <div class="modal-dialog"  style="width: 900px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="AccessModalLabel">Droits d'accès</h4>
+      </div>
+      <div class="modal-body">
+		<div class="row">
+			<div class="col-md-9">
+				<h4 id="AccessModal-username">Accès autorisés</h1>
+				<input type="hidden" id="AccessModal-userid" value="" />
+			</div>
+			<div class="col-md-3 text-right">
+				<a href="#" class="btn btn-success" onclick="$('#form_card').val($('#AccessModal-userid').val()); $('#AccessModal').modal('hide'); " data-toggle="modal" data-target="#addAccess" ><i class="glyphicon glyphicon-asterisk"></i> Nouvel accès</a>
+			</div>
+		</div>
+		<div  id="AccessModalContent"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+       
+      </div>
+    </div>
+  </div>
+</div>
+
+	
+	<script>
+	
+		function disableAccess(doorid, cardid, accessid) {
+		
+			if(!confirm('Voulez-vous vraiment désactiver ce droit d\'accès ?')) {
+				//location.href = url;
+				return false;
+			}
+			
+			var url = '{{ path("access_remove", {'id': 'access_id'}) }}'; 
+			url = url.replace("access_id", accessid);
+			
+			$.ajax({
+			  type: "delete",
+			  url: url
+			})
+			  .done(function( data ) {
+				loadAccesses(doorid, cardid);
+			  })
+			   .fail(function(msg, textStatus, errorThrown) {
+				alert("Erreur dans la suppression.");
+			  });
+			  
+			
+			
+			return false;
+		}
+		
+		function disableAllAccess(doorid, cardid) {
+			if(!confirm('Voulez-vous vraiment interdire l\'accès pour cette personne ?')) {
+				return false;
+			}
+			
+			var url = '{{ path("access_remove_all", {'door': 'door_id', 'card': 'card_id'}) }}'; 
+			url = url.replace("card_id", cardid);
+			url = url.replace("door_id", doorid);
+			
+			$.ajax({
+			  type: "delete",
+			  url: url
+			})
+			  .done(function( data ) {
+				 document.location.reload(); 
+			  })
+			   .fail(function(msg, textStatus, errorThrown) {
+				alert("Erreur dans la suppression.");
+			  });
+			  
+			return false;
+		}
+				
+		function loadAccesses(doorid, cardid) {
+			
+			$("#AccessModalContent").html('<div class="text-center" style=" margin-top: 30px;"><img src="{{ asset('img/loader.gif') }}" style="height: 30px;" /></div>');
+			
+			var url = '{{ path("access_list", {'door': 'door_id', 'card': 'card_id'}) }}'; 
+			
+			url = url.replace("door_id", doorid);
+			url = url.replace("card_id", cardid);
+			
+			$.ajax({
+			  type: "GET",
+			  url: url
+			})
+			  .done(function( data ) {
+				$("#AccessModalContent").html(data);
+			  });
+			
+			
+		}
+	</script>
+	
+	
 {% endblock %}

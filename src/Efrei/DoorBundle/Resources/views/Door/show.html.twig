@@ -28,98 +28,47 @@
 					<a href="#" class="btn btn-success" data-toggle="modal" data-target="#addAccess"><i class="glyphicon glyphicon-asterisk"></i> Nouvel accès</a>
 				</div>
 			</div>
-		<table class="table table-striped">
-		<thead>
-			<tr>
-				<th></th>
-				<th colspan="2">Identité</th>
-				<th colspan="2">Validité de l'accès</th>
-				<th colspan="2">Tranche horaire autorisée</th>
-			</tr>
-		</thead>
-		<thead>
-			<tr>
-				<th>#</th>
-				<th>Personne</th>
-				<th>Groupe</th>
-				<th>Porte</th>
-				<th>De la date</th>
-				<th>A la date</th>
-			</tr>
-		</thead>
-		
-		
-		<tbody>
-		{% for card in card_accesses %}
-			<tr>
-				<td><i class="glyphicon glyphicon-user "></i></td>
+			
+			<table class="table table-striped">
+			
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Nom</th>
+						<th>Prénom</th>
+						<th>Card ID</th>
+						<th>Promotion</th>
+						<th>Student ID</th>
+						<th class="text-center">Action</th>
+					</tr>
+				</thead>	
+				
+				
+				<tbody>
+				{% for card in card_accesses %}
+					<tr>
+						<td><i class="glyphicon glyphicon-user "></i></td>
 
-				<td>{{ card.lastname }}</td>
-				<td>{{ card.firstname }}</td>
-				<td>{{ card.cardcode }} {{ card.facilitycode }}</td>
-				<td>P2015</td>
-				<td class="text-right"><i class="glyphicon glyphicon-chevron-down"></i>
-			</tr>
-			<tr id="card{{ card.id }}">
-				<td colspan="6">
-					<table style="width: 100%">
-						<thead>
-							<tr>
-								<th>#</th>
-								<th>Délégation</th>
-								<th>Porte</th>
-								<th colspan="2">Période de validité</th>
-								<th colspan="2">Horaires d'accès</th>
-								<th>Jours d'accès</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for access in card.accesses %}
-							<tr>
-								<td>{{ access.id }}</td>
-								<td>{% if access.group is not null %} {{ access.group.name }} {% endif %}</td>
-								<td>{% if access.door is not null %} {{ access.door.location }} {% endif %}</td>
-								<td style="text-align: right;">{% if access.fromdate is not null %} {{ access.fromdate|date('d-m-Y H:i') }} {% endif %}</td>
-								<td style="text-align: right;">{% if access.todate is not null %} {{ access.todate|date('d-m-Y H:i') }} {% endif %}</td>
-								<td style="text-align: right;">{% if access.fromtime is not null %} {{ access.fromtime|date('H:i') }} {% endif %}</td>
-								<td style="text-align: right;">{% if access.totime is not null %} {{ access.totime|date('H:i') }} {% endif %}</td>
-								<td></td>
-								<td><a href="javascript:disableAccess('{{ path('access_delete_from', { 'id': entity.id, 'entity': 'door' }) }}')">Désactiver</a></td>
-							</tr>
-							{% endfor %}
-						</tbody>
-					</table>
-				</td>
-			</tr>
-		{% endfor %}
-		
-		
-		</tbody>
-	</table>
+						<td>{{ card.lastname }}</td>
+						<td>{{ card.firstname }}</td>
+						<td>{{ card.cardcode }} {{ card.facilitycode }}</td>
+						<td>{{ card.promotion }}</td>
+						<td>{{ card.studentid }}</td>
+						<td class="text-right">
+							<a onclick="$('#AccessModal-username').html('{{ card.firstname|e('js') }} {{ card.lastname|e('js') }}'); $('#AccessModal-userid').val('{{ card.id }}'); loadAccesses({{ entity.id }}, {{ card.id }});" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#AccessModal"><i class="glyphicon glyphicon-time "></i> {{ card.accesses|length }} {% if card.accesses|length > 1 %}autorisations{% else %}autorisation{% endif %}</a>
+							<a href="#" onclick="return disableAllAccess({{ entity.id }}, {{ card.id }});" class="btn btn-danger btn-sm">Interdire</a>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="7" class="text-center">Aucune personne n'a accès à cette porte.</td>
+					</tr>
+				{% endfor %}
+				</tbody>
+			</table>
 		</div>
 		
 		
-		
-		{% for access in entity.accesses %}
-		
-			<tr>
-				<td>{{ access.id }}</td>
-				<td>{% if access.card is not null %} {{ access.card.lastname }} {{ access.card.firstname }} ({{ access.card.cardcode }}) {% endif %}</td>
-				<td>{% if access.group is not null %} {{ access.group.name }} {% endif %}</td>
-				<td>{% if access.door is not null %} {{ access.door.location }} {% endif %}</td>
-				<td style="text-align: right;">{% if access.fromdate is not null %} {{ access.fromdate|date('d-m-Y H:i') }} {% endif %}</td>
-				<td style="text-align: right;">{% if access.todate is not null %} {{ access.todate|date('d-m-Y H:i') }} {% endif %}</td>
-				<td style="text-align: right;">{% if access.fromtime is not null %} {{ access.fromtime|date('H:i') }} {% endif %}</td>
-				<td style="text-align: right;">{% if access.totime is not null %} {{ access.totime|date('H:i') }} {% endif %}</td>
-				<td><a href="javascript:disableAccess('{{ path('access_delete_from', { 'id': entity.id, 'entity': 'door' }) }}')">Désactiver</a></td>
-			</tr>
-		
-		{% else %}
-			<tr>
-				<td colspan="7">Aucune personne n'a accès à cette porte.</td>
-			</tr>
-		{% endfor %}
 		
 		<div class="col-md-3">
 			<div>
@@ -214,7 +163,7 @@
 				<label class="col-sm-4 control-label">Jours d'accès<br/><small>Laissez vide si cet accès ne possède pas de restriction.</small></label>
 				
 				<div class="col-sm-6">
-				
+					{{ form_widget(access_form.days) }}
 				</div>
 			</div>
 			
@@ -231,14 +180,103 @@
 </div><!-- /.modal -->
 
 
+<div class="modal fade" id="AccessModal" tabindex="-1" role="dialog" aria-labelledby="AccessModalLabel" aria-hidden="true">
+  <div class="modal-dialog"  style="width: 900px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="AccessModalLabel">Droits d'accès</h4>
+      </div>
+      <div class="modal-body">
+		<div class="row">
+			<div class="col-md-9">
+				<h4 id="AccessModal-username">Accès autorisés</h1>
+				<input type="hidden" id="AccessModal-userid" value="" />
+			</div>
+			<div class="col-md-3 text-right">
+				<a href="#" class="btn btn-success" onclick="$('#form_card').val($('#AccessModal-userid').val()); $('#AccessModal').modal('hide'); " data-toggle="modal" data-target="#addAccess" ><i class="glyphicon glyphicon-asterisk"></i> Nouvel accès</a>
+			</div>
+		</div>
+		<div  id="AccessModalContent"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+       
+      </div>
+    </div>
+  </div>
+</div>
+
 	
 	<script>
 	
-		function disableAccess(url) {
+		function disableAccess(doorid, cardid, accessid) {
 		
-			if(confirm('Voulez-vous vraiment désactiver ce droit d\'accès ?')) {
-				location.href = url;
+			if(!confirm('Voulez-vous vraiment désactiver ce droit d\'accès ?')) {
+				//location.href = url;
+				return false;
 			}
+			
+			var url = '{{ path("access_remove", {'id': 'access_id'}) }}'; 
+			url = url.replace("access_id", accessid);
+			
+			$.ajax({
+			  type: "delete",
+			  url: url
+			})
+			  .done(function( data ) {
+				loadAccesses(doorid, cardid);
+			  })
+			   .fail(function(msg, textStatus, errorThrown) {
+				alert("Erreur dans la suppression.");
+			  });
+			  
+			
+			
+			return false;
+		}
+		
+		function disableAllAccess(doorid, cardid) {
+			if(!confirm('Voulez-vous vraiment interdire l\'accès pour cette personne ?')) {
+				return false;
+			}
+			
+			var url = '{{ path("access_remove_all", {'door': 'door_id', 'card': 'card_id'}) }}'; 
+			url = url.replace("card_id", cardid);
+			url = url.replace("door_id", doorid);
+			
+			$.ajax({
+			  type: "delete",
+			  url: url
+			})
+			  .done(function( data ) {
+				 document.location.reload(); 
+			  })
+			   .fail(function(msg, textStatus, errorThrown) {
+				alert("Erreur dans la suppression.");
+			  });
+			  
+			return false;
+		}
+				
+		function loadAccesses(doorid, cardid) {
+			
+			$("#AccessModalContent").html('<div class="text-center" style=" margin-top: 30px;"><img src="{{ asset('img/loader.gif') }}" style="height: 30px;" /></div>');
+			
+			var url = '{{ path("access_list", {'door': 'door_id', 'card': 'card_id'}) }}'; 
+			
+			url = url.replace("door_id", doorid);
+			url = url.replace("card_id", cardid);
+			
+			$.ajax({
+			  type: "GET",
+			  url: url
+			})
+			  .done(function( data ) {
+				$("#AccessModalContent").html(data);
+			  });
+			
+			
 		}
 	</script>
 	

@@ -26,12 +26,26 @@ class CardGroupController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('EfreiDoorBundle:CardGroup')->findAll();
+		$user = $this->get('security.context')->getToken()->getUser();
+		
+		$doors = $em->getRepository('EfreiDoorBundle:CardGroup')->findDoor();
+		
+		/*
+		foreach($doors as $id=>$door) {
+			$doors[$id]["groups"] = $em->getRepository('EfreiDoorBundle:CardGroup')->findBy(array('door' => $door["id"]), array('name' => 'ASC'));
+		}
+        */
+		if($this->get('security.context')->isGranted('ROLE_ADMIN')) {
+			$entities = $em->getRepository('EfreiDoorBundle:CardGroup')->findAll();
+		} else {
+			$entities = $em->getRepository('EfreiDoorBundle:CardGroup')->findByUser($user);
+		}
+		        
 
         return $this->render('EfreiDoorBundle:CardGroup:index.html.twig', array(
-            'entities' => $entities,
+            'groups' => $entities,
         ));
+		
     }
     /**
      * Creates a new CardGroup entity.
@@ -66,14 +80,34 @@ class CardGroupController extends Controller
     */
     private function createCreateForm(CardGroup $entity)
     {
-        $form = $this->createForm(new CardGroupType(), $entity, array(
-            'action' => $this->generateUrl('group_create'),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Create'));
-
-        return $form;
+		return $this->createFormBuilder($entity)
+					->setMethod('POST')
+					->setAction($this->generateUrl('group_create'))
+					
+					->add('name', 'text', array(
+						'required'    => true,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('door', 'entity', array(
+						'class' => 'Efrei\DoorBundle\Entity\Door',
+						'required' => true,
+						'empty_value' => ''
+					))
+					->add('users', 'entity', array(
+						'class' => 'Efrei\UserBundle\Entity\User',
+						'required' => true,
+						'multiple' => true
+					))
+					->add('description', 'textarea', array(
+						'attr' => array(
+							'class' => 'form-control',
+							'rows' => '3'
+						),
+						'required'    => false
+					))
+		->getForm();
     }
 
     /**
@@ -98,19 +132,25 @@ class CardGroupController extends Controller
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
+		$user = $this->get('security.context')->getToken()->getUser();
 
         $entity = $em->getRepository('EfreiDoorBundle:CardGroup')->find($id);
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find CardGroup entity.');
         }
+		
+		if(!$this->get('security.context')->isGranted('ROLE_ADMIN') && !$entity->allowManage($user)) {
+			 throw $this->createNotFoundException('Permission denied.');
+		}
 
-        $deleteForm = $this->createDeleteForm($id);
 		$accessForm = $this->createAccessForm(new Access($entity));
+		
+		$groupAccess = $em->getRepository('EfreiDoorBundle:Card')->AccessDoor($entity->getDoor());
 		
         return $this->render('EfreiDoorBundle:CardGroup:show.html.twig', array(
             'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
+			'group_accesses'      => $groupAccess,
             'access_form' => $accessForm->createView(),        
 		));
     }
@@ -180,7 +220,7 @@ class CardGroupController extends Controller
             throw $this->createNotFoundException('Unable to find CardGroup entity.');
         }
 
-        $editForm = $this->createEditForm($entity);
+        $editForm = $this->createCreateForm($entity);
         $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('EfreiDoorBundle:CardGroup:edit.html.twig', array(
@@ -223,7 +263,7 @@ class CardGroupController extends Controller
         }
 
         $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
+        $editForm = $this->createCreateForm($entity);
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
@@ -231,7 +271,7 @@ class CardGroupController extends Controller
 
             return $this->redirect($this->generateUrl('group_show', array('id' => $id)));
         }
-
+		
         return $this->render('EfreiDoorBundle:CardGroup:edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),
@@ -282,7 +322,7 @@ class CardGroupController extends Controller
 	private function createAccessForm(Access $access)
     {
         return $this->createFormBuilder($access)
-			->setAction($this->generateUrl('group_create_access', array('id' => $access->getGroup()->getId())))
+			->setAction($this->generateUrl('group_create_access', array('id' => $access->getDoor()->getId())))
 			->setMethod('POST')
             ->add('fromdate',    'datetime', array(
 				'required' => false,
@@ -300,13 +340,18 @@ class CardGroupController extends Controller
 				'required' => false,
 				'empty_value' => ''
 			))
+			->add('days', 'choice', array(
+				'choices'   => array('Lundi' => 'Lundi', 'Mardi' => 'Mardi', 'Mercredi' => 'Mercredi', 'Jeudi' => 'Jeudi', 'Vendredi' => 'Vendredi', 'Samedi' => 'Samedi', 'Dimanche' => 'Dimanche'),
+				'required' => false,
+				'empty_value' => '',
+				'multiple' => true
+			))
 			->add('card', 'entity', array(
 				'class' => 'Efrei\DoorBundle\Entity\Card',
 				'required' => true,
 				'empty_value' => ''
 			))
-			->add('submit', 'submit')
 			->getForm()
-        ;
+		;
     }
 }

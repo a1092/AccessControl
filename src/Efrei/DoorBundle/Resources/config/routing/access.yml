@@ -6,6 +6,10 @@ access_show:
     pattern:  /{id}/show
     defaults: { _controller: "EfreiDoorBundle:Access:show" }
 
+access_list:
+    pattern:  /{door}/{card}/list
+    defaults: { _controller: "EfreiDoorBundle:Access:list" }
+
 access_new:
     pattern:  /new
     defaults: { _controller: "EfreiDoorBundle:Access:new" }
@@ -28,6 +32,16 @@ access_delete:
     pattern:  /{id}/delete
     defaults: { _controller: "EfreiDoorBundle:Access:delete" }
     requirements: { _method: post|delete }
+
+access_remove:
+    pattern:  /{id}/remove
+    defaults: { _controller: "EfreiDoorBundle:Access:remove" }
+    requirements: { _method: post|delete }
+
+access_remove_all:
+    pattern:  /{door}/{card}/remove/all
+    defaults: { _controller: "EfreiDoorBundle:Access:removeAll" }
+    requirements: { _method: post|delete|get }
 
 access_delete_from:
     pattern:  /{id}/delete/{entity}

@@ -12,6 +12,24 @@ use Doctrine\ORM\EntityRepository;
  */
 class DoorRepository extends EntityRepository
 {
+	public function AccessCard($card) {
+		
+		
+		$qb = $this->createQueryBuilder('Door')
+					->leftJoin('Door.accesses', 'Access')
+					->where('Access.card = :card')
+					->setParameter('card', $card)
+					->andwhere('Access.active = 1')
+		;
+		
+		
+			
+		$query = $qb->getQuery();
+		
+		return $query->getResult();
+	}
+	
+	
 	public function findBatiment() {
 	
 		$qb = $this->createQueryBuilder('Door')

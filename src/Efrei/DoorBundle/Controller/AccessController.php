@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Efrei\DoorBundle\Entity\Access;
+use Efrei\DoorBundle\Entity\Door;
+use Efrei\DoorBundle\Entity\Card;
 use Efrei\DoorBundle\Form\AccessType;
 
 /**
@@ -43,6 +45,12 @@ class AccessController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+			
+			$user = $this->get('security.context')->getToken()->getUser();
+			if(!$this->get('security.context')->isGranted('ROLE_ADMIN') && !$entity->getDoor()->allowManager($user)) {
+				 throw $this->createNotFoundException('Permission denied.');
+			}
+		
             $em->persist($entity);
             $em->flush();
 
@@ -109,6 +117,25 @@ class AccessController extends Controller
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),        ));
     }
+	
+	public function listAction($door, $card) {
+		$em = $this->getDoctrine()->getManager();
+		
+		$door = $em->getRepository('EfreiDoorBundle:Door')->find($door);
+		$card = $em->getRepository('EfreiDoorBundle:Card')->find($card);
+		
+		$user = $this->get('security.context')->getToken()->getUser();
+		if(!$this->get('security.context')->isGranted('ROLE_ADMIN') && !$door->allowManage($user)) {
+			 throw $this->createNotFoundException('Permission denied.');
+		}
+		
+		$CardAccess = $em->getRepository('EfreiDoorBundle:Access')->AccessDoor($door, $card);
+		
+		 return $this->render('EfreiDoorBundle:Access:list.html.twig', array(
+            'accesses'      => $CardAccess,
+		));
+	}
+	
 
     /**
      * Displays a form to edit an existing Access entity.
@@ -123,6 +150,11 @@ class AccessController extends Controller
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Access entity.');
         }
+		
+		$user = $this->get('security.context')->getToken()->getUser();
+		if(!$this->get('security.context')->isGranted('ROLE_ADMIN') && !$entity->getDoor()->allowManage($user)) {
+			 throw $this->createNotFoundException('Permission denied.');
+		}
 
         $editForm = $this->createEditForm($entity);
         $deleteForm = $this->createDeleteForm($id);
@@ -194,17 +226,66 @@ class AccessController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $entity = $em->getRepository('EfreiDoorBundle:Access')->find($id);
-
+		
             if (!$entity) {
                 throw $this->createNotFoundException('Unable to find Access entity.');
             }
-
+			
+			$user = $this->get('security.context')->getToken()->getUser();
+			if(!$this->get('security.context')->isGranted('ROLE_ADMIN') && !$entity->getDoor()->allowManage($user)) {
+				 throw $this->createNotFoundException('Permission denied.');
+			}
+		
             $em->remove($entity);
             $em->flush();
         }
 
         return $this->redirect($this->generateUrl('access'));
     }
+	
+	/**
+     * Deletes a Access entity.
+     *
+     */
+    public function removeAction($id)
+    {
+		$em = $this->getDoctrine()->getManager();
+		$entity = $em->getRepository('EfreiDoorBundle:Access')->find($id);
+
+		if (!$entity) {
+			throw $this->createNotFoundException('Unable to find Access entity.');
+		}
+		
+		$user = $this->get('security.context')->getToken()->getUser();
+		if(!$this->get('security.context')->isGranted('ROLE_ADMIN') && !$entity->getDoor()->allowManage($user)) {
+			 throw $this->createNotFoundException('Permission denied.');
+		}
+			
+		$em->remove($entity);
+        $em->flush();
+
+		return new Response('Success');
+	}
+	
+	public function removeAllAction($door, $card) {
+	
+		$em = $this->getDoctrine()->getManager();
+		$user = $this->get('security.context')->getToken()->getUser();
+		
+		$entities = $em->getRepository('EfreiDoorBundle:Access')->findBy(array('door' => $door, 'card' => $card));
+		
+		foreach($entities as $entity) {
+			
+			if($this->get('security.context')->isGranted('ROLE_ADMIN') || ($entity->getDoor()->allowManage($user) && $entity->getGroup() != null)) {
+				 $em->remove($entity);
+			}
+			
+		}
+		
+        $em->flush();
+
+		return new Response('Success');
+	}
 	
 	public function deleteFromAction(Request $request, $id, $entity)
     {

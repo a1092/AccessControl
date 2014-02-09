@@ -1,0 +1,51 @@
+	<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Porte</th>
+			<th>Groupe</th>
+			<th>Validité de l'accès</td>
+			<th>Horaires autorisés</td>
+			<th>Jours autorisés</td>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for access in accesses %}
+			<tr>
+				<td>{{ access.id }}</td>
+				<td>{{ access.door.location }}</td>
+				<td>{% if access.group is not null %}{{ access.group.name }}{% endif %}</td>
+				<td>
+					{% if access.fromdate is empty and access.todate is empty %} 
+						illimité 
+					{% elseif access.fromdate is not empty and access.todate is empty %}
+						A partir de {{ access.fromdate }}
+					{% elseif access.fromdate is empty and access.todate is not empty %}
+						Jusqu'au {{ access.todate }}
+					{% else %}
+						De {{ access.fromdate }} jusqu'au {{ access.todate }}
+					{% endif %}
+				</td>
+				<td>
+				{% if access.fromtime is empty and access.totime is empty %} 
+						- 
+					{% elseif access.fromtime is not empty and access.totime is empty %}
+						A partir de {{ access.fromtime }}
+					{% elseif access.fromtime is empty and access.totime is not empty %}
+						Jusqu'à {{ access.totime }}
+					{% else %}
+						De {{ access.fromtime }} jusqu'au {{ access.totime }}
+					{% endif %}
+				</td>
+				<td>{% if access.days is empty %}Tous{% else %}{{ access.days|join(" | ") }}{% endif %}</td>
+				<td>
+					{% if is_granted("ROLE_ADMIN") or access.group is not null %}
+					<a href="#" onclick="return disableAccess({{ access.door.id }}, {{ access.card.id}}, {{access.id}});" class="btn btn-danger btn-sm">Supprimer</a>
+					{% endif %}
+				</td>
+				
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>

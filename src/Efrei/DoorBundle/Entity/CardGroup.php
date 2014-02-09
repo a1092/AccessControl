@@ -106,6 +106,16 @@ class CardGroup
     {
         return $this->users;
     }
+	
+	 public function allowManage(\Efrei\UserBundle\Entity\User $user)
+    {
+		if($this->users->contains($user))
+			return true;
+		else
+			return false;
+		
+	}
+	
 
     /**
      * Add cards

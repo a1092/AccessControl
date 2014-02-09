@@ -1,16 +1,83 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Card edit</h1>
-
-    {{ form(edit_form) }}
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('card') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+   <form {{ form_enctype(edit_form) }} action="{{ path('card_update', {id: entity.id}) }}" method="POST" class="form-horizontal" role="form">
+	
+		<div class="row">
+			<div class="col-md-8">
+				<h1>Modification d'une carte</h1>
+			</div>
+			<div class="col-md-4 text-right">
+				<a class="btn btn-danger" href="{{ path('card') }}">Retourner à la liste</a>
+				<input type="submit" class="btn btn-success" value="Enregistrer" class="button" />
+			</div>
+		</div>
+		
+		<div style="margin-top: 40px;">
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.lastname, "Nom") }}</label>
+				{{ form_errors(edit_form.lastname) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.lastname) }}
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.firstname, "Prénom") }}</label>
+				{{ form_errors(edit_form.firstname) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.firstname) }}
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.lastname, "Carte") }}</label>
+				{{ form_errors(edit_form.cardcode) }}
+				{{ form_errors(edit_form.facilitycode) }}
+				<div class="col-sm-8">
+				{{ form_widget(edit_form.cardcode) }}
+				</div>
+				<div class="col-sm-2">
+				{{ form_widget(edit_form.facilitycode) }}
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.type, "Type") }}</label>
+				{{ form_errors(edit_form.type) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.type) }}
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.studentid, "Etudiant ID") }}</label>
+				{{ form_errors(edit_form.studentid) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.studentid) }}
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.promotion, "Promotion") }}</label>
+				{{ form_errors(edit_form.promotion) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.promotion) }}
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.description, "Description") }}</label>
+				{{ form_errors(edit_form.description) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.description) }}
+				</div>
+			</div>
+		</div>
+		
+		
+		{{ form_rest(edit_form) }}
+									
+		</div>
+	</form>
 {% endblock %}

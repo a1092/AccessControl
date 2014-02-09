@@ -23,14 +23,25 @@ class CardController extends Controller
      *
      */
     public function indexAction()
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('EfreiDoorBundle:Card')->findAll();
+    {	
+		
+		$em = $this->getDoctrine()->getManager();
+		
+		$promotions = $em->getRepository('EfreiDoorBundle:Card')->findPromotion();
+		
+		foreach($promotions as $id=>$promotion) {
+			$promotions[$id]["cards"] = $em->getRepository('EfreiDoorBundle:Card')->findBy(array('promotion' => $promotion["promotion"], 'type' => $promotion["type"]), array('lastname' => 'ASC', 'firstname' => 'ASC'));
+		}
+        
+		$entities = $em->getRepository('EfreiDoorBundle:Card')->findAll();
+        
 
         return $this->render('EfreiDoorBundle:Card:index.html.twig', array(
+            'promotions' => $promotions,
             'entities' => $entities,
         ));
+		
+		
     }
     /**
      * Creates a new Card entity.
@@ -39,7 +50,7 @@ class CardController extends Controller
     public function createAction(Request $request)
     {
         $entity = new Card();
-        $form = $this->createCreateForm($entity);
+        $form = $this->createEditForm($entity);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -82,7 +93,7 @@ class CardController extends Controller
     public function newAction()
     {
         $entity = new Card();
-        $form   = $this->createCreateForm($entity);
+        $form   = $this->createEditForm($entity);
 
         return $this->render('EfreiDoorBundle:Card:new.html.twig', array(
             'entity' => $entity,
@@ -106,9 +117,13 @@ class CardController extends Controller
 
         $deleteForm = $this->createDeleteForm($id);
 		$accessForm = $this->createAccessForm(new Access($entity));
-		
+
+		$doorAccess = $em->getRepository('EfreiDoorBundle:Door')->AccessCard($entity);
+
         return $this->render('EfreiDoorBundle:Card:show.html.twig', array(
             'entity'      => $entity,
+			'door_accesses'      => $doorAccess,
+
 			'access_form' => $accessForm->createView(),        
             'delete_form' => $deleteForm->createView(),        ));
     }
@@ -173,8 +188,8 @@ class CardController extends Controller
     * @return \Symfony\Component\Form\Form The form
     */
     private function createEditForm(Card $entity)
-    {
-        $form = $this->createForm(new CardType(), $entity, array(
+    {	
+       /*  $form = $this->createForm(new CardType(), $entity, array(
             'action' => $this->generateUrl('card_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
@@ -182,6 +197,64 @@ class CardController extends Controller
         $form->add('submit', 'submit', array('label' => 'Update'));
 
         return $form;
+		*/
+		return $this->createFormBuilder($entity)
+					->setMethod('POST')
+					->setAction($this->generateUrl('card_create'))
+					->add('firstname', 'text', array(
+						'required'    => true,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('lastname', 'text', array(
+						'required'    => true,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('cardcode', 'text', array(
+						'required'    => true,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('facilitycode', 'text', array(
+						'required'    => true,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('type', 'choice', array(
+						'required'    => true,
+						'empty_value' => '',
+						'choices' => array("Etudiant" => "Etudiant", "Administration" => "Administration", "Professeur" => "Professeur", "Autre" => "Autre"),
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('studentid', 'text', array(
+						'required'    => false,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('promotion', 'choice', array(
+						'empty_value' => '',
+						'choices' => array("P2010" => "P2010", "P2011" => "P2011", "P2012" => "P2012", "P2013" => "P2013", "P2014" => "P2014", "P2015" => "P2015", "P2016" => "P2016", "P2017" => "P2017", "P2018" => "P2018", "P2019" => "P2019", "P2020" => "P2020", "P2021" => "P2021"),
+						'required'    => false,
+						'attr' => array(
+							'class' => 'form-control',
+						),
+					))
+					->add('description', 'textarea', array(
+						'attr' => array(
+							'class' => 'form-control',
+							'rows' => '3'
+						),
+						'required'    => false
+					))
+		->getForm();
     }
     /**
      * Edits an existing Card entity.
@@ -204,7 +277,7 @@ class CardController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('card_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('card_show', array('id' => $id)));
         }
 
         return $this->render('EfreiDoorBundle:Card:edit.html.twig', array(
@@ -275,13 +348,19 @@ class CardController extends Controller
 				'required' => false,
 				'empty_value' => ''
 			))
+			->add('days', 'choice', array(
+				'choices'   => array('Lundi' => 'Lundi', 'Mardi' => 'Mardi', 'Mercredi' => 'Mercredi', 'Jeudi' => 'Jeudi', 'Vendredi' => 'Vendredi', 'Samedi' => 'Samedi', 'Dimanche' => 'Dimanche'),
+				'required' => false,
+				'empty_value' => '',
+				'multiple' => true
+			))
 			->add('door', 'entity', array(
 				'class' => 'Efrei\DoorBundle\Entity\Door',
 				'required' => true,
 				'empty_value' => ''
 			))
-			->add('submit', 'submit')
+			//->add('Ajouter l\'accès', 'submit')
 			->getForm()
-        ;
+		;
     }
 }

@@ -47,4 +47,25 @@ class AccessRepository extends EntityRepository
 		
 		return $query->getResult();
 	}
+	
+	public function AccessDoor($door, $card) {
+		
+		
+		$qb = $this->createQueryBuilder('Access')
+					//->leftJoin('Card.accesses', 'Access')
+					->where('Access.door = :door')
+					->setParameter('door', $door)
+					->andwhere('Access.card = :card')
+					->setParameter('card', $card)
+					->andwhere('Access.active = 1')
+				
+		;
+		
+		
+			
+		$query = $qb->getQuery();
+		
+		
+		return $query->getResult();
+	}
 }

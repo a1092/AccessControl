@@ -1,16 +1,59 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>CardGroup edit</h1>
-
-    {{ form(edit_form) }}
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('group') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+    <form {{ form_enctype(edit_form) }} action="{{ path('group_update', {id: entity.id}) }}" method="POST" class="form-horizontal" role="form">
+	
+		<div class="row">
+			<div class="col-md-8">
+				<h1>Modification d'un groupe</h1>
+			</div>
+			<div class="col-md-4 text-right">
+				<a class="btn btn-danger" href="{{ path('group') }}">Retourner à la liste</a>
+				<input type="submit" class="btn btn-success" value="Enregistrer" class="button" />
+			</div>
+		</div>
+		
+		<div style="margin-top: 40px;">
+			
+			{{ form_errors(edit_form) }}
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.name, "Libellé") }}</label>
+				{{ form_errors(edit_form.name) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.name) }}
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.description, "Description") }}</label>
+				{{ form_errors(edit_form.description) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.description) }}
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.door, "Porte") }}</label>
+				{{ form_errors(edit_form.door) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.door) }}
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label">{{ form_label(edit_form.users, "Administrateurs") }}</label>
+				{{ form_errors(edit_form.users) }}
+				<div class="col-sm-10">
+				{{ form_widget(edit_form.users) }}
+				</div>
+			</div>
+		</div>
+		
+		
+		{{ form_rest(edit_form) }}
+									
+		</div>
+	</form>
+		
 {% endblock %}

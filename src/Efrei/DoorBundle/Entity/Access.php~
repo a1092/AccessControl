@@ -91,7 +91,6 @@ class Access
 			$this->card = $obj;
 		} else if(get_class($obj) == 'Efrei\DoorBundle\Entity\CardGroup') {
 			$this->group = $obj;
-			$this->door = $obj->getDoor();
 		}
 		
 		$this->active = true;
@@ -294,27 +293,4 @@ class Access
     }
 
     
-
-    /**
-     * Set days
-     *
-     * @param array $days
-     * @return Access
-     */
-    public function setDays($days)
-    {
-        $this->days = $days;
-
-        return $this;
-    }
-
-    /**
-     * Get days
-     *
-     * @return array 
-     */
-    public function getDays()
-    {
-        return $this->days;
-    }
 }
