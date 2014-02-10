@@ -12,27 +12,34 @@ use Doctrine\ORM\EntityRepository;
  */
 class AccessRepository extends EntityRepository
 {
-	public function checkAccess($door, $cardcode, $facilitycode) {
+	public function checkAccess($door, $card, $day) {
 		
 	
-		$qb = $this->createQueryBuilder('j')
-					->leftJoin('j.card', 'c')
-					->leftJoin('j.door', 'd')
+		$qb = $this->createQueryBuilder('Access')
 					
-					->where('c.cardcode = :cardcode')
-					->setParameter('cardcode', $cardcode)
-					->andwhere('c.facilitycode = :facilitycode')
-					->setParameter('facilitycode', $facilitycode)
-					->andwhere('d.location = :door')
+					->where('Access.card = :card')
+					->setParameter('card', $card)
+					
+					->andwhere('Access.door = :door')
 					->setParameter('door', $door)
 					
-					->andwhere('j.fromdate <= :fromdate OR j.fromdate is NULL')
+					->andwhere('Access.fromdate <= :fromdate OR Access.fromdate is NULL')
 					->setParameter('fromdate', date('Y-m-d H:i:s', time()))
 					
-					
-					->andwhere('j.todate >= :todate OR j.todate is NULL')
+					->andwhere('Access.todate >= :todate OR Access.todate is NULL')
 					->setParameter('todate', date('Y-m-d H:i:s', time()))
-		
+				
+					->andwhere('(Access.fromtime <= :fromtime OR Access.fromtime is NULL)')
+					->setParameter('fromtime', new \DateTime())
+					->andwhere('(Access.totime >= :totime OR Access.totime is NULL)')
+					->setParameter('totime', new \DateTime())
+				
+					->andwhere('Access.days LIKE :day OR Access.days LIKE :emptyday')
+					
+					->setParameter('day', '%'.$day.'%')
+					->setParameter('emptyday', 'a:0:{}')
+					
+					
 					
 				//	->andwhere('(j.day = :day OR j.day is NULL)')
 				//	->setParameter('day', date('l', time()))

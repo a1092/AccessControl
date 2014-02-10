@@ -115,17 +115,19 @@ class CardController extends Controller
             throw $this->createNotFoundException('Unable to find Card entity.');
         }
 
-        $deleteForm = $this->createDeleteForm($id);
 		$accessForm = $this->createAccessForm(new Access($entity));
 
 		$doorAccess = $em->getRepository('EfreiDoorBundle:Door')->AccessCard($entity);
+		
+		$logs = $em->getRepository('EfreiDoorBundle:Log')->findBy(array("card" => $entity), array("date" => 'DESC'), 10);
 
         return $this->render('EfreiDoorBundle:Card:show.html.twig', array(
             'entity'      => $entity,
+            'logs'      => $logs,
 			'door_accesses'      => $doorAccess,
 
-			'access_form' => $accessForm->createView(),        
-            'delete_form' => $deleteForm->createView(),        ));
+			'access_form' => $accessForm->createView()
+		));
     }
 	
 	public function createAccessAction(Request $request, $id) {

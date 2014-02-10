@@ -256,37 +256,4 @@ class Door
 		
 		return false;
 	}
-
-    /**
-     * Add logs
-     *
-     * @param \Efrei\DoorBundle\Entity\Log $logs
-     * @return Door
-     */
-    public function addLog(\Efrei\DoorBundle\Entity\Log $logs)
-    {
-        $this->logs[] = $logs;
-
-        return $this;
-    }
-
-    /**
-     * Remove logs
-     *
-     * @param \Efrei\DoorBundle\Entity\Log $logs
-     */
-    public function removeLog(\Efrei\DoorBundle\Entity\Log $logs)
-    {
-        $this->logs->removeElement($logs);
-    }
-
-    /**
-     * Get logs
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getLogs()
-    {
-        return $this->logs;
-    }
 }

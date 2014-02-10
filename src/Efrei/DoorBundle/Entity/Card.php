@@ -81,12 +81,18 @@ class Card
 	* @ORM\OneToMany(targetEntity="Efrei\DoorBundle\Entity\Access", mappedBy="card")
 	*/
 	private $accesses;
+	
+	/**
+	* @ORM\OneToMany(targetEntity="Efrei\DoorBundle\Entity\Log", mappedBy="card")
+	*/
+	private $logs;
 
 	
 	
 	public function __construct()
 	{
 		$this->accesses = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->logs = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 	
     /**
@@ -318,5 +324,38 @@ class Card
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Add logs
+     *
+     * @param \Efrei\DoorBundle\Entity\Log $logs
+     * @return Card
+     */
+    public function addLog(\Efrei\DoorBundle\Entity\Log $logs)
+    {
+        $this->logs[] = $logs;
+
+        return $this;
+    }
+
+    /**
+     * Remove logs
+     *
+     * @param \Efrei\DoorBundle\Entity\Log $logs
+     */
+    public function removeLog(\Efrei\DoorBundle\Entity\Log $logs)
+    {
+        $this->logs->removeElement($logs);
+    }
+
+    /**
+     * Get logs
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getLogs()
+    {
+        return $this->logs;
     }
 }

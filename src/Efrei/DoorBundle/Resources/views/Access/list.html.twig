@@ -20,22 +20,22 @@
 					{% if access.fromdate is empty and access.todate is empty %} 
 						illimité 
 					{% elseif access.fromdate is not empty and access.todate is empty %}
-						A partir de {{ access.fromdate }}
+						A partir de {{ access.fromdate|date('d-m-Y') }}
 					{% elseif access.fromdate is empty and access.todate is not empty %}
-						Jusqu'au {{ access.todate }}
+						Jusqu'au {{ access.todate|date('d-m-Y') }}
 					{% else %}
-						De {{ access.fromdate }} jusqu'au {{ access.todate }}
+						De {{ access.fromdate|date('d-m-Y') }} jusqu'au {{ access.todate|date('d-m-Y') }}
 					{% endif %}
 				</td>
 				<td>
 				{% if access.fromtime is empty and access.totime is empty %} 
 						- 
 					{% elseif access.fromtime is not empty and access.totime is empty %}
-						A partir de {{ access.fromtime }}
+						A partir de {{ access.fromtime|date("H:i") }}
 					{% elseif access.fromtime is empty and access.totime is not empty %}
-						Jusqu'à {{ access.totime }}
+						Jusqu'à {{ access.totime|date("H:i") }}
 					{% else %}
-						De {{ access.fromtime }} jusqu'au {{ access.totime }}
+						De {{ access.fromtime|date('H:i') }} jusqu'au {{ access.totime|date('H:i') }}
 					{% endif %}
 				</td>
 				<td>{% if access.days is empty %}Tous{% else %}{{ access.days|join(" | ") }}{% endif %}</td>

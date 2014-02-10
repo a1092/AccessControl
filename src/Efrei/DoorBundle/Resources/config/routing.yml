@@ -1,4 +1,6 @@
-
+home:
+    pattern:  /home
+    defaults: { _controller: "EfreiDoorBundle:Home:index" }
 
 EfreiDoorBundle_card:
     resource: "@EfreiDoorBundle/Resources/config/routing/card.yml"

@@ -6,6 +6,10 @@ efrei_door:
     resource: "@EfreiDoorBundle/Resources/config/routing.yml"
     prefix:   /
 
+efrei_home:
+    resource: "@EfreiDoorBundle/Resources/config/routing.yml"
+    prefix:   /
+
 fos_user_security:
     resource: "@FOSUserBundle/Resources/config/routing/security.xml"
 
@@ -24,3 +28,10 @@ fos_user_resetting:
 fos_user_change_password:
     resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
     prefix: /profile
+
+root:
+    pattern: /
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /home
+        permanent: true

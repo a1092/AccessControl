@@ -3,7 +3,8 @@
 {% block body -%}
    <div class="row">
 		<div class="col-md-8">
-			<h1>{{entity.firstname}} {{entity.lastname}} <small> {{ entity.type }} {{ entity.promotion }}</small></h1>
+			
+			<h1>{{entity.firstname}} {{entity.lastname}} <small>{{ entity.type }} {{ entity.promotion }}</small></h1>
 		</div>
 		<div class="col-md-4 text-right">
 			<a class="btn btn-danger" href="{{ path('card') }}">Retourner à la liste</a>
@@ -11,13 +12,15 @@
 		</div>
 	</div>
 	
+	<div>ID Etudiant : {{ entity.studentid }}</div>
+	<div>Carte : {{ entity.cardcode }} {{ entity.facilitycode }}</div>
 	<p>
 		{{ entity.description }}
 	</p>
 	
 	<div class="row" style="margin-top: 30px;">
 		
-		<div class="col-md-9">
+		<div class="col-md-8">
 			
 			<div class="row">
 				<div class="col-md-9">
@@ -64,34 +67,30 @@
 		
 		
 		
-		<div class="col-md-3">
+		<div class="col-md-4">
 			<div>
 				<h4>Derniers passages</h4>
 				<table class="table table-hover">
 				<thead>
 					<tr>
-						<th>Carte</th>
+						<th></th>
+						<th>Porte</th>
 						<th>Date</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr class="success">
-						<td>WIZEL Alexandre (3856)</td>
-						<td>2014-01-25 19:24:04</td>
+					
+					{% for log in logs %}
+					<tr class="{% if log.statut == 1 %}success{% else %}danger{% endif %}">
+						<th><i class="{% if log.statut == 1 %}glyphicon glyphicon-ok{% else %}glyphicon glyphicon-remove danger{% endif %}"></i></th>
+						<td>{{ log.door.location }}<br/> <small>Bâtiment {{ log.door.batiment }}</small></td>
+						<td class="text-right">{{ log.date|date("d-m-Y") }}<br/><small>{{ log.date|date("H:i:s") }}</small></td>
 					</tr>
-					<tr class="danger">
-						<td>WIZEL Alexandre (3856)</td>
-						<td>2014-01-25 19:24:04</td>
-					</tr>
-					<tr class="danger">
-						<td>WIZEL Alexandre (3856)</td>
-						<td>2014-01-25 19:24:04</td>
-					</tr>
-					<tr class="success">
-						<td>WIZEL Alexandre (3856)</td>
-						<td>2014-01-25 19:24:04</td>
-					</tr>
-				
+					{% else %}
+						<tr>
+							<td colspan="2" class="text-center">Aucun accès.</td>
+						</tr>
+					{% endfor %}
 				</table>
 			</div>
 		</div>

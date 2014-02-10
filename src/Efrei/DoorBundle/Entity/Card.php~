@@ -45,14 +45,14 @@ class Card
 	/**
      * @var string
      *
-     * @ORM\Column(name="studentid", type="string", length=100)
+     * @ORM\Column(name="studentid", type="string", length=100, nullable=true)
      */
     private $studentid;
 
 	/**
      * @var string
      *
-     * @ORM\Column(name="promotion", type="string", length=100)
+     * @ORM\Column(name="promotion", type="string", length=100, nullable=true)
      */
     private $promotion;
 
@@ -81,12 +81,18 @@ class Card
 	* @ORM\OneToMany(targetEntity="Efrei\DoorBundle\Entity\Access", mappedBy="card")
 	*/
 	private $accesses;
+	
+	/**
+	* @ORM\OneToMany(targetEntity="Efrei\DoorBundle\Entity\Log", mappedBy="card")
+	*/
+	private $logs;
 
 	
 	
 	public function __construct()
 	{
 		$this->accesses = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->logs = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 	
     /**
@@ -295,5 +301,28 @@ class Card
     public function getPromotion()
     {
         return $this->promotion;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return Card
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

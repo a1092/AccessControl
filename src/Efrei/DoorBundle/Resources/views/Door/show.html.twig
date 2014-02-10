@@ -76,28 +76,24 @@
 				<table class="table table-hover">
 				<thead>
 					<tr>
+						<th></th>
 						<th>Carte</th>
 						<th>Date</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr class="success">
-						<td>WIZEL Alexandre (3856)</td>
-						<td>2014-01-25 19:24:04</td>
+					
+					{% for log in entity.logs %}
+					<tr class="{% if log.statut == 1 %}success{% else %}danger{% endif %}">
+						<th><i class="{% if log.statut == 1 %}glyphicon glyphicon-ok{% else %}glyphicon glyphicon-remove danger{% endif %}"></i></th>
+						<td>{{ log.card.firstname }} {{ log.card.lastname }}<br/> <small>{{ log.card.cardcode }}</small></td>
+						<td class="text-right">{{ log.date|date("d-m-Y") }}<br/><small>{{ log.date|date("H:i:s") }}</small></td>
 					</tr>
-					<tr class="danger">
-						<td>WIZEL Alexandre (3856)</td>
-						<td>2014-01-25 19:24:04</td>
-					</tr>
-					<tr class="danger">
-						<td>WIZEL Alexandre (3856)</td>
-						<td>2014-01-25 19:24:04</td>
-					</tr>
-					<tr class="success">
-						<td>WIZEL Alexandre (3856)</td>
-						<td>2014-01-25 19:24:04</td>
-					</tr>
-				
+					{% else %}
+						<tr>
+							<td colspan="2" class="text-center">Aucun accès.</td>
+						</tr>
+					{% endfor %}
 				</table>
 			</div>
 		</div>

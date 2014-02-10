@@ -147,9 +147,11 @@ class CardGroupController extends Controller
 		$accessForm = $this->createAccessForm(new Access($entity));
 		
 		$groupAccess = $em->getRepository('EfreiDoorBundle:Card')->AccessDoor($entity->getDoor());
+		$logs = $em->getRepository('EfreiDoorBundle:Log')->findBy(array("door" => $entity->getDoor()), array("date" => 'DESC'), 10);
 		
         return $this->render('EfreiDoorBundle:CardGroup:show.html.twig', array(
             'entity'      => $entity,
+            'logs'      => $logs,
 			'group_accesses'      => $groupAccess,
             'access_form' => $accessForm->createView(),        
 		));

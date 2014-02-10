@@ -10,7 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Efrei\DoorBundle\Entity\Access;
 use Efrei\DoorBundle\Entity\Door;
 use Efrei\DoorBundle\Entity\Card;
+use Efrei\DoorBundle\Entity\Log;
 use Efrei\DoorBundle\Form\AccessType;
+
+use \DateTime;
 
 /**
  * Access controller.
@@ -335,18 +338,39 @@ class AccessController extends Controller
     }
 	
 	public function checkAction($door, $cardcode, $facilitycode) {
-	
+		
+		$week = array("Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Samedi");
 		$em = $this->getDoctrine()->getEntityManager();
-		$permission = $em->getRepository('EfreiDoorBundle:Access')->checkAccess($door, $cardcode, $facilitycode);		
+		
+		$door_entity = $em->getRepository('EfreiDoorBundle:Door')->findOneByLocation($door);
+		if (!$door_entity) {
+            throw $this->createNotFoundException('Access denied.');
+        }
+		
+		$card_entity = $em->getRepository('EfreiDoorBundle:Card')->findOneBy(array("cardcode" => $cardcode, "facilitycode" => $facilitycode));
+		if (!$card_entity) {
+            throw $this->createNotFoundException('Access denied.');
+        }
+		
+		$permission = $em->getRepository('EfreiDoorBundle:Access')->checkAccess($door_entity, $card_entity, $week[date("w")]);		
 		
 		$response = new Response();
-	
+		
+		$log = new Log();
+		$log->setDoor($door_entity);
+		$log->setCard($card_entity);
+		$log->setDate(new DateTime());
+		
 		if(count($permission) > 0) {
+			$log->setStatut(1);
 			$response->setStatusCode(200);
 		} else {
+			$log->setStatut(0);
 			$response->setStatusCode(400);
 		}
 		
+		$em->persist($log);
+		$em->flush();
 		
 		return $response;
 		
